@@ -4,7 +4,7 @@ import math
 
 pygame.init()
 
-arrow_img = pygame.image.load("./assets/90arrow.png")
+arrow_img = pygame.image.load("./assets/arrow/90arrow.png")
 
 
 def round_to_angle(x, angle):
@@ -29,8 +29,8 @@ class Arrow:
 
     def draw(self):
         flight_angle = self.flight_angle()
-        pic_angle = round_to_angle(flight_angle, 15)
-        image = pygame.image.load("./assets/" + str(pic_angle) + "arrow.png")
+        pic_angle = round_to_angle(flight_angle, 5)
+        image = pygame.image.load("./assets/arrow/" + str(pic_angle) + "arrow.png")
         rect = image.get_rect(center=(self.x, self.y))
         screen.blit(image, rect)
 
@@ -67,4 +67,4 @@ while True:
     arrow.update()
 
     pygame.display.flip()
-    clock.tick(30)
+    clock.tick(60)
