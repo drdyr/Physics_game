@@ -5,7 +5,7 @@ import math
 pygame.init()
 
 
-class Projectile():
+class Projectile:
     def __init__(self, initial_x, initial_y, initial_speed, horizontal_angle):
         self.u = initial_speed
         self.angle = horizontal_angle
@@ -14,17 +14,24 @@ class Projectile():
         self.x = initial_x
         self.y = initial_y
         self.t = 0
+        self.image = pygame.image.load("./assets/arrow.png")
+        self.rect = self.image.get_rect(center=(self.x, self.y))
 
     def draw(self):
-        image = pygame.image.load("./arrow.png")
-        rect = image.get_rect(center=(self.x, self.y))
-        screen.blit(image, rect)
+        self.rot_center(10)
+        rect = self.image.get_rect(center=(self.x, self.y))
+        screen.blit(self.image, rect)
+
 
     def update(self):
         self.t += 5/60
-
         self.x = math.cos(self.angle) * self.u * self.t + self.initial_x  # s = ut
         self.y = -1 * (math.sin(self.angle) * self.u * self.t - 0.5 * 9.81 * self.t ** 2) + self.initial_y  # s = ut + 0.5at^2
+
+    def rot_center(self, angle):
+        center = self.rect.center
+        self.image = pygame.transform.rotate(self.image, angle)
+        self.rect = self.image.get_rect(center=(self.x, self.y))
 
 
 class Cannon:
@@ -52,6 +59,10 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w:
+                ball.rot_center(45)
+
 
     screen.fill((0, 0, 0))
     ball.draw()
