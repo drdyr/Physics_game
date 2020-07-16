@@ -5,7 +5,7 @@ import math
 pygame.init()
 
 
-class Projectile:
+class Projectile():
     def __init__(self, initial_x, initial_y, initial_speed, horizontal_angle):
         self.u = initial_speed
         self.angle = horizontal_angle
@@ -16,8 +16,9 @@ class Projectile:
         self.t = 0
 
     def draw(self):
-        rect = pygame.Rect(self.x, self.y, 50, 50)
-        pygame.draw.ellipse(screen, (255, 255, 255), rect, 0)
+        image = pygame.image.load("./arrow.png")
+        rect = image.get_rect(center=(self.x, self.y))
+        screen.blit(image, rect)
 
     def update(self):
         self.t += 5/60
@@ -43,7 +44,7 @@ screen_width, screen_height = 1600, 1200
 screen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 
-ball = Projectile(10, 500, 150, math.pi/2.5)
+ball = Projectile(10, 500, 50, math.pi/2.5)
 cannon1 = Cannon(0, 350)
 
 while True:
