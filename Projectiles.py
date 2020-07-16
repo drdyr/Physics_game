@@ -4,29 +4,39 @@ import math
 
 pygame.init()
 
+arrow_img = pygame.image.load("./assets/arrow.png")
 
-class Projectile:
-    def __init__(self, initial_x, initial_y, initial_speed, horizontal_angle):
-        self.u = initial_speed
-        self.angle = horizontal_angle
-        self.initial_x = initial_x
-        self.initial_y = initial_y
-        self.x = initial_x
-        self.y = initial_y
+
+class Arrow:
+    def __init__(self, x, y, u, angle):
+        self.u = u
+        self.angle = angle
+        self.x = x
+        self.y = y
         self.t = 0
         self.image = pygame.image.load("./assets/arrow.png")
         self.rect = self.image.get_rect(center=(self.x, self.y))
+        self.horizontal_u = math.cos(self.angle) * self.u
+        self.vertical_u = math.sin(self.angle) * self.u
+
+
+    def flight_angle(self):
+        vertical_v = self.vertical_u - 9.81 * self.t
+        flight_angle = math.atan(vertical_v / self.horizontal_u)
+        flight_angle *= 180 / math.pi
+        return round(flight_angle, 2)
 
     def draw(self):
         self.rot_center(10)
         rect = self.image.get_rect(center=(self.x, self.y))
         screen.blit(self.image, rect)
 
-
     def update(self):
-        self.t += 5/60
-        self.x = math.cos(self.angle) * self.u * self.t + self.initial_x  # s = ut
-        self.y = -1 * (math.sin(self.angle) * self.u * self.t - 0.5 * 9.81 * self.t ** 2) + self.initial_y  # s = ut + 0.5at^2
+        vertical_v = self.vertical_u - 9.81 * self.t
+        print(self.flight_angle())
+        self.t += 1/6
+        self.x += 1/6 * self.horizontal_u
+        self.y -= 1/6 * vertical_v - 0.5 * 9.81 * (1/6) ** 2
 
     def rot_center(self, angle):
         center = self.rect.center
@@ -34,25 +44,12 @@ class Projectile:
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
 
-class Cannon:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def draw(self):
-        rect = pygame.Rect(self.x, self.y, 100, 50)
-        pygame.draw.rect(screen, (255, 255, 255), rect, 0)
-
-
-
-projectile_group = []
-
-screen_width, screen_height = 1600, 1200
+screen_width, screen_height = 1600, 800
 screen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 
-ball = Projectile(10, 500, 50, math.pi/2.5)
-cannon1 = Cannon(0, 350)
+arrow = Arrow(10, 500, 50, math.pi/2.5)
+
 
 while True:
     for event in pygame.event.get():
@@ -61,12 +58,11 @@ while True:
             sys.exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
-                ball.rot_center(45)
-
+                arrow.rot_center(45)
 
     screen.fill((0, 0, 0))
-    ball.draw()
-    ball.update()
+    arrow.draw()
+    arrow.update()
 
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(6)
