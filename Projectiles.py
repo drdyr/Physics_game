@@ -20,6 +20,7 @@ class Arrow:
         self.t = 0
         self.horizontal_u = math.cos(self.angle) * self.u
         self.vertical_u = math.sin(self.angle) * self.u
+        self.time_inc = 1/6
 
     def flight_angle(self):
         vertical_v = self.vertical_u - 9.81 * self.t
@@ -36,14 +37,9 @@ class Arrow:
 
     def update(self):
         vertical_v = self.vertical_u - 9.81 * self.t
-        self.t += 1
-        self.x += 1 * self.horizontal_u
-        self.y -= 1 * vertical_v - 0.5 * 9.81 * (1) ** 2
-
-    def rot_center(self, angle):
-        center = self.rect.center
-        self.image = pygame.transform.rotate(self.image, angle)
-        self.rect = self.image.get_rect(center=(self.x, self.y))
+        self.t += self.time_inc
+        self.x += self.time_inc * self.horizontal_u
+        self.y -= self.time_inc * vertical_v - 0.5 * 9.81 * self.time_inc ** 2
 
 
 screen_width, screen_height = 1600, 800
@@ -58,9 +54,6 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
-                arrow.rot_center(45)
 
     screen.fill((0, 0, 0))
     arrow.draw()
